@@ -1,0 +1,29 @@
+$primary-color: #ffa62b;
+$secondary-color: #1a1c20;
+
+.myApp {
+  margin-top: 4rem !important;
+}
+
+a {
+  text-decoration: none;
+  color: #1a1c20;
+}
+
+.main-nav-active {
+  .MuiListItemIcon-root {
+    color: $primary-color;
+  }
+  .MuiListItemText-root {
+    color: $primary-color;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  .main-desc {
+    padding: 0 10rem;
+  }
+}
