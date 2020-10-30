@@ -1,4 +1,4 @@
-$primary-color: #ffa62b;
+$primary-color: #2d6187;
 $secondary-color: #1a1c20;
 
 .myApp {
@@ -23,7 +23,12 @@ a {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  .main-desc {
-    padding: 0 10rem;
-  }
+}
+
+.register-row {
+  margin-left: auto;
+}
+
+.secondary-color {
+  color: $secondary-color;
 }

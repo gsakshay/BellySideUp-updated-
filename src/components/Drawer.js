@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState ,useEffect, useContext} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -21,10 +21,22 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ContactSupportIcon from '@material-ui/icons/ContactSupport';
 import PeopleIcon from '@material-ui/icons/People';
 import FeedbackIcon from '@material-ui/icons/Feedback';
+import FastfoodIcon from '@material-ui/icons/Fastfood';
+import LocalMallIcon from '@material-ui/icons/LocalMall';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Avatar from '@material-ui/core/Avatar';
 import Logo from "../assets/images/logo.png";
-import {NavLink} from "react-router-dom"
+import {NavLink} from "react-router-dom";
+import Button from '@material-ui/core/Button';
+import Chip from '@material-ui/core/Chip';
+
+import LoginDialog from "../Dialogs/Login"
+import RegisterDialog from "../Dialogs/Register"
+
+import {Context} from "../Context/ContextProvier"
+
+import {axiosGet} from "../config/axiosClient"
 
 const drawerWidth = 240;
 
@@ -56,7 +68,8 @@ const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
   myToolbar: {
     display: "grid",
-    placeItems: "center"
+    placeItems: "center",
+    height: "4rem"
   },
   drawerPaper: {
     width: drawerWidth,
@@ -68,6 +81,23 @@ const useStyles = makeStyles((theme) => ({
   sideLogo:{
     width: "11rem",
     height: "3.5rem"
+  },
+  loginButton:{
+    marginLeft: "auto",
+    marginRight: "1rem"
+  },
+  drawerLogo:{
+    fontWeight: "bold",
+    fontSize: "1.35rem"
+  },
+  logout:{
+    marginTop: "5rem"
+  },
+  drawerNavigations: {
+    padding: "3rem 0 0 0"
+  },
+  navs:{
+    paddingLeft: "2rem"
   }
 }));
 
@@ -76,66 +106,111 @@ const ResponsiveDrawer = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
+  const [openRegisterDialog, setOpenRegisterDialog] = useState(false);
+
+  const context = useContext(Context);
+  const user = context.Profile;
+  const {username, admin} = user.state;
+
+  console.log(username, "See here")
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  useEffect(() => {
+    getUserDetails()
+  }, [])
+
+  const getUserDetails = () =>{
+    if(localStorage.getItem("auth_token")){
+      axiosGet(`users/user/single`)
+      .then(res=>{
+        if(res.status === 200){
+          user.dispatch({
+            type: "all", value: res.data
+          })
+        }
+      })
+    }
+  }
+
   const drawer = (
     <div>
-      <div className={classes.myToolbar} > 
-        <Avatar src={Logo} variant="square" className={classes.sideLogo} />
+      <div className={classes.myToolbar} >
+        <Typography className={classes.drawerLogo} color="secondary">Belly Side up <FastfoodIcon color="primary" /> </Typography> 
       </div>
+     <div className={classes.drawerNavigations}> 
       <List>
         <NavLink activeClassName="main-nav-active" to="/home">
-          <ListItem button>
-          <ListItemIcon><HomeIcon /></ListItemIcon>
-          <ListItemText>Home</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="primary"><HomeIcon /></ListItemIcon>
+          <ListItemText color="secondary">Home</ListItemText>
         </ListItem>
         </NavLink>
         <NavLink activeClassName="main-nav-active" to="/about">
-          <ListItem button>
-          <ListItemIcon><InfoIcon /></ListItemIcon>
-          <ListItemText>About Us</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="primary"><InfoIcon /></ListItemIcon>
+          <ListItemText color="secondary">About Us</ListItemText>
         </ListItem>
         </NavLink>
         
         <NavLink activeClassName="main-nav-active" to="/menu">
-          <ListItem button>
-          <ListItemIcon><RestaurantMenuIcon /></ListItemIcon>
-          <ListItemText>Menu</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><RestaurantMenuIcon /></ListItemIcon>
+          <ListItemText color="secondary">Menu</ListItemText>
         </ListItem>
         </NavLink>
         
         <NavLink activeClassName="main-nav-active" to="/contact">
-          <ListItem button>
-          <ListItemIcon><ContactSupportIcon /></ListItemIcon>
-          <ListItemText>Contact Us</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><ContactSupportIcon /></ListItemIcon>
+          <ListItemText color="secondary">Contact Us</ListItemText>
         </ListItem>
         </NavLink>
         
         <NavLink activeClassName="main-nav-active" to="/favorites">
-          <ListItem button>
-          <ListItemIcon><FavoriteIcon /></ListItemIcon>
-          <ListItemText>Favorites</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><FavoriteIcon /></ListItemIcon>
+          <ListItemText color="secondary">Favorites</ListItemText>
         </ListItem>
         </NavLink>
         
         <NavLink activeClassName="main-nav-active" to="/users">
-          <ListItem button>
-          <ListItemIcon><PeopleIcon /></ListItemIcon>
-          <ListItemText>Users</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><PeopleIcon /></ListItemIcon>
+          <ListItemText color="secondary">Users</ListItemText>
+        </ListItem>
+        </NavLink>
+
+        <NavLink activeClassName="main-nav-active" to="/orders">
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><LocalMallIcon /></ListItemIcon>
+          <ListItemText color="secondary">Orders</ListItemText>
         </ListItem>
         </NavLink>
         
         <NavLink activeClassName="main-nav-active" to="/feedback">
-          <ListItem button>
-          <ListItemIcon><FeedbackIcon /></ListItemIcon>
-          <ListItemText>Feedback</ListItemText>
+          <ListItem className={classes.navs} button>
+          <ListItemIcon color="secondary"><FeedbackIcon /></ListItemIcon>
+          <ListItemText color="secondary">Feedbacks</ListItemText>
         </ListItem>  
         </NavLink>
               
       </List>
+      </div>
+      <div className={classes.logout}>
+        <Typography>
+          Log out 
+        </Typography>
+        <IconButton>
+        <ExitToAppIcon color="secondary" onClick={()=>{
+          localStorage.clear()
+          user.dispatch({type: "reset", value:{}})
+        }}/>
+        </IconButton>
+      </div>  
     </div>
   );
 
@@ -158,6 +233,16 @@ const ResponsiveDrawer = (props) => {
           <Typography variant="h5" noWrap>
             Belly Side Up
           </Typography>
+          {
+            username ? <Chip className={classes.loginButton} color="secondary" avatar={<Avatar alt={username}/>} label={username} /> :
+             <><Button className={classes.loginButton} variant="outlined" color="secondary" onClick={()=>setOpenLoginDialog(true)}>
+            Log In
+          </Button>
+            <Button className={classes.register} variant="contained" color="secondary" onClick={()=>setOpenRegisterDialog(true)}>
+                Register
+            </Button></>
+          }
+          
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
@@ -193,6 +278,14 @@ const ResponsiveDrawer = (props) => {
       </nav>
       <main className={classes.content}>
       </main>
+      <LoginDialog 
+      open={openLoginDialog}
+      setOpen={setOpenLoginDialog}
+      />
+      <RegisterDialog 
+      open={openRegisterDialog}
+      setOpen={setOpenRegisterDialog}
+      />
     </div>
   );
 }

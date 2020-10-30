@@ -33,8 +33,8 @@ export const axiosPut = async (apiURL, data ) => {
   });
 };
 
-export const axiosDelete = async (apiURL, data ) => {
-  return axios.delete(`${URL}/${apiURL}`, data, {
+export const axiosDelete = async (apiURL ) => {
+  return axios.delete(`${URL}/${apiURL}`, {
     headers: {
       "Content-Type": "application/json;charset=UTF-8",
       Authorization: auth_token,
