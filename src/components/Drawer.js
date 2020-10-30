@@ -27,7 +27,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Avatar from '@material-ui/core/Avatar';
 import Logo from "../assets/images/logo.png";
-import {NavLink} from "react-router-dom";
+import {NavLink, useHistory} from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 
@@ -101,19 +101,39 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const refreshPage = () =>{
+  window.location.reload();
+}
+
 const ResponsiveDrawer = (props) => {
-  const { window } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [openRegisterDialog, setOpenRegisterDialog] = useState(false);
+  
+  const history = useHistory()
 
   const context = useContext(Context);
   const user = context.Profile;
   const {username, admin} = user.state;
 
-  console.log(username, "See here")
+  const favorites = context.Favorites;
+
+  const {favoriteList} = favorites.state;
+
+  const getAllFavorites = () =>{
+    axiosGet(`users/favorites/all`)
+    .then(res=>{
+        if(res.status === 200){
+            favorites.dispatch({
+                type: "fav-list",
+                value: res.data
+            })
+        }
+    })
+    .catch(err=>console.log(err, "there is an error"))
+  }
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -121,6 +141,7 @@ const ResponsiveDrawer = (props) => {
 
   useEffect(() => {
     getUserDetails()
+    getAllFavorites()
   }, [])
 
   const getUserDetails = () =>{
@@ -170,51 +191,63 @@ const ResponsiveDrawer = (props) => {
         </ListItem>
         </NavLink>
         
-        <NavLink activeClassName="main-nav-active" to="/favorites">
+        {
+          username && <NavLink activeClassName="main-nav-active" to="/favorites">
           <ListItem className={classes.navs} button>
           <ListItemIcon color="secondary"><FavoriteIcon /></ListItemIcon>
           <ListItemText color="secondary">Favorites</ListItemText>
         </ListItem>
         </NavLink>
+        }
         
-        <NavLink activeClassName="main-nav-active" to="/users">
+        {
+          admin && <NavLink activeClassName="main-nav-active" to="/users">
           <ListItem className={classes.navs} button>
           <ListItemIcon color="secondary"><PeopleIcon /></ListItemIcon>
           <ListItemText color="secondary">Users</ListItemText>
         </ListItem>
         </NavLink>
+        }
 
-        <NavLink activeClassName="main-nav-active" to="/orders">
+        {
+          username && <NavLink activeClassName="main-nav-active" to="/orders">
           <ListItem className={classes.navs} button>
           <ListItemIcon color="secondary"><LocalMallIcon /></ListItemIcon>
           <ListItemText color="secondary">Orders</ListItemText>
         </ListItem>
         </NavLink>
+        }
         
-        <NavLink activeClassName="main-nav-active" to="/feedback">
+        {
+          admin && <NavLink activeClassName="main-nav-active" to="/feedback">
           <ListItem className={classes.navs} button>
           <ListItemIcon color="secondary"><FeedbackIcon /></ListItemIcon>
           <ListItemText color="secondary">Feedbacks</ListItemText>
         </ListItem>  
         </NavLink>
+        }
               
       </List>
       </div>
-      <div className={classes.logout}>
+      {
+        username && <div className={classes.logout}>
         <Typography>
           Log out 
         </Typography>
         <IconButton>
         <ExitToAppIcon color="secondary" onClick={()=>{
-          localStorage.clear()
+          history.push("/home")
+          localStorage.clear();
+          refreshPage();
           user.dispatch({type: "reset", value:{}})
         }}/>
         </IconButton>
-      </div>  
+      </div> 
+      }
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  /* const container = window !== undefined ? () => window().document.body : undefined; */
 
   return (
     <div className={`${classes.root}`}>
@@ -249,7 +282,7 @@ const ResponsiveDrawer = (props) => {
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
           <Drawer
-            container={container}
+            /* container={container} */
             variant="temporary"
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}

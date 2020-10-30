@@ -1,11 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Grid from '@material-ui/core/Grid';
-import {axiosGet, axiosPost} from "../../config/axiosClient"
+import {axiosDelete, axiosGet, axiosPost} from "../../config/axiosClient"
 import { makeStyles } from '@material-ui/core/styles';
 import Card from "../../components/Card";
 import Button from '@material-ui/core/Button';
 import {useHistory, useParams} from "react-router-dom"
 import CommentsCard from '../../components/CommentsCard';
+
+import {Context} from "../../Context/ContextProvier"
 
 const useStyles = makeStyles((theme) => ({
   promotions:  {
@@ -19,6 +21,9 @@ const useStyles = makeStyles((theme) => ({
     },
     color: "rgb(255, 56, 92)",
     backgroundColor: "#fcdada"
+  },
+  favButton: {
+      margin: "1rem 0"
   }
   
 }));
@@ -27,11 +32,15 @@ const SingleDish = () => {
   const classes = useStyles();
   const [dishDetails, setDishDetails] = useState({});
   const [comments, setComments] = useState([]);
-  
-  const slug = useParams();
-  const dishId = slug.dishId;
 
-    const getAllDishes = () =>{
+    const slug = useParams();
+    const dishId = slug.dishId;
+
+    const context = useContext(Context);
+    /* const favorites = context.Favorites;
+    const [isFavorite, setIsFavorite] = useState(false); */
+
+    const getDishDetails = () =>{
         axiosGet(`dishes/${dishId}`)
         .then(res=>{
             if(res.status === 200){
@@ -51,10 +60,38 @@ const SingleDish = () => {
         .catch(err=>console.log(err))
     }
 
+    /* const getAllFavorites = () =>{
+    axiosGet(`users/favorites/all`)
+    .then(res=>{
+        if(res.status === 200){
+            favorites.dispatch({
+                type: "fav-list",
+                value: res.data
+            })
+            const list = res.data.filter(fav=> fav?.dishId == dishId);
+            if(list.length){
+                isFavorite(true)
+            }
+        }
+    })
+    .catch(err=>console.log(err, "there is an error"))
+  } */
+
     useEffect(() => {
-        getAllDishes();
+        getDishDetails();
         getAllComments();
+        /* getAllFavorites(); */
     }, [])
+
+    const addFavorite = () =>{
+        axiosPost(`users/favorites/${dishId}`, {})
+            .then(res=>{
+                if(res.status === 200){
+                    alert("Dish added to favorites");
+                }
+            })
+            .catch(err=>alert("Dish is already in favorites list"))
+    }
 
     const orderDish = () =>{
         axiosPost(`orders/${dishId}`, {})
@@ -76,11 +113,14 @@ const SingleDish = () => {
             </div>
         </div>
         <Grid container className={classes.promotions} spacing={6}>
-            <Grid item xs={12} sm={5} ><Card content={dishDetails} single={true}/></Grid>
+            <Grid item xs={12} sm={5} ><Card content={dishDetails} single={true} /></Grid>
             <Grid item xs={10} sm={4} ><CommentsCard comments={comments} dishId={dishId} reRenderList={getAllComments}/></Grid>
-            <Grid item xs={2} >
+            <Grid item xs={3} >
                 <Button variant="contained" onClick={orderDish} size="large" color="primary">
                 Order Now
+                </Button>
+                <Button variant="outlined" onClick={addFavorite} className={classes.favButton} color="secondary">
+                    Add Favorite
                 </Button>
             </Grid>
         </Grid>

@@ -1,11 +1,12 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Grid from '@material-ui/core/Grid';
-import {axiosGet} from "../../config/axiosClient"
+import {axiosDelete, axiosGet} from "../../config/axiosClient"
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import LeaderCard from "../../components/LeaderCard"
 import { Typography } from '@material-ui/core';
 import { Email } from '@material-ui/icons';
+import AddLeader from "../../Dialogs/AddLeader"
 
 
 import {Context} from "../../Context/ContextProvier"
@@ -25,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   },
   leaderHeading:{
       paddingTop: "2rem"
+  },
+  leaderActionButtons:{
+      margin: "1rem"
   }
 }));
 
@@ -35,6 +39,8 @@ const About = () => {
   const context = useContext(Context);
   const user = context.Profile;
   const {username, admin} = user.state;
+
+  const [addLeaderDialog, setAddLeaderDialog] = useState(false)
 
     const getAllLeaders = () =>{
         axiosGet(`leaders`)
@@ -50,6 +56,17 @@ const About = () => {
         getAllLeaders()
     }, [])
 
+    const deleteleads = () =>{
+        axiosDelete(`leaders`, {})
+            .then(res=>{
+                if(res.status === 200){
+                    alert(`All leaders have been deleted`)
+                    getAllLeaders()
+                }
+            })
+            .catch(err=>alert(err))
+    }
+
     return (
         <div>
         <div className="container">
@@ -63,9 +80,14 @@ const About = () => {
             Corporate leadership
         </Typography>
         {
-            admin && <Button variant="outlined" color="secondary">
-            Add leader
-        </Button>
+            admin && <>
+            <Button variant="outlined" className={classes.leaderActionButtons} onClick={()=>setAddLeaderDialog(true)} color="primary">
+                Add leader
+            </Button>
+            <Button variant="outlined" className={classes.leaderActionButtons} onClick={deleteleads} color="secondary">
+                Delete all leaders
+            </Button>
+            </>
         }
         <Grid container className={classes.promotions} spacing={3}>
             {
@@ -82,6 +104,11 @@ const About = () => {
                 <span>Email:</span><strong>bellysideup@food.net</strong>
             </div>
         </div>
+        <AddLeader 
+        open={addLeaderDialog}
+        setOpen={setAddLeaderDialog}
+        reRenderList={getAllLeaders}
+        />
         </div>
     )
 }

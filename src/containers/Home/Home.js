@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Grid from '@material-ui/core/Grid';
-import {axiosGet} from "../../config/axiosClient"
+import {axiosDelete, axiosGet} from "../../config/axiosClient"
 import { makeStyles } from '@material-ui/core/styles';
 import Card from "../../components/Card";
 import Button from '@material-ui/core/Button';
-import PromotionCard from "../../components/PromotionCard"
+import PromotionCard from "../../components/PromotionCard";
+import AddPromotion from "../../Dialogs/AddPromotion"
 
 import {Context} from "../../Context/ContextProvier"
 
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fcdada"
   },
   newDishButton:{
-      marginTop: "2rem"
+      margin: "2rem 2rem 0 0",
   }
   
 }));
@@ -32,16 +33,23 @@ const Home = () => {
   const [promotion, setPromotion] = useState([]);
   const [dishes, setDishes] = useState([])
   const [leaders, setLeaders] = useState([]);
+  const [promotionFiltered, setPromotionFiltered] = useState([])
+
+  const [addPromotionDialog, setAddPromotionDialog] = useState(false)
 
     const context = useContext(Context);
     const user = context.Profile;
     const {username, admin} = user.state;
+    const toast = context.Toast;
+
+    console.log(toast)
 
     const getAllPromotions = () =>{
         axiosGet(`promotions`)
         .then(res=>{
             if(res.status === 200){
-                setPromotion(res?.data?.filter(prom=>prom.featured))
+                setPromotion(res?.data)
+                setPromotionFiltered(res?.data?.filter(prom=>prom.featured))
             }
         })
         .catch(err=>console.log(err, "there is an error"))
@@ -73,6 +81,17 @@ const Home = () => {
         getAllLeaders();
     }, [])
 
+    const deleteAllPromotions = () =>{
+        axiosDelete(`promotions` ,{})
+            .then(res=>{
+                if(res.status === 200){
+                    alert(`All promotions have been deleted successfully`)
+                    getAllPromotions()
+                }
+            })
+            .catch(err=>alert(err))
+    }
+
     return (
         <div>
         <div className="container">
@@ -82,13 +101,20 @@ const Home = () => {
             </div>
         </div>
         {
-            admin && <Button className={classes.newDishButton} variant="outlined" color="secondary">
-            Add Promotion
-        </Button>
+            admin && <>
+            <Button className={classes.newDishButton} variant="outlined" onClick={()=>setAddPromotionDialog(true)} color="primary">
+                Add Promotion
+            </Button>
+            <Button className={classes.newDishButton} variant="outlined" onClick={deleteAllPromotions} color="secondary">
+                Delete all promotions
+            </Button>
+            </>
         }
         <Grid container className={classes.promotions} spacing={3}>
             {
-                promotion?.map(prom => <Grid item xs={12} sm={6} md={4}><PromotionCard content={prom}/></Grid>)
+                admin ? promotion?.map(prom => <Grid item xs={12} sm={6} md={4}><PromotionCard content={prom} admin={admin} promoList={true} reRenderList={getAllPromotions}/></Grid>)
+                :
+                promotionFiltered?.map(prom => <Grid item xs={12} sm={6} md={4}><PromotionCard content={prom} admin={admin} promoList={true} reRenderList={getAllPromotions}/></Grid>)
             }
             {
                 dishes?.map(dishes => <Grid item xs={12} sm={6} md={4}><PromotionCard content={dishes}/></Grid>)
@@ -97,6 +123,11 @@ const Home = () => {
                 leaders?.map(leaders => <Grid item xs={12} sm={6} md={4}><PromotionCard content={leaders}/></Grid>)
             }
         </Grid>
+        <AddPromotion 
+        open={addPromotionDialog}
+        setOpen={setAddPromotionDialog}
+        reRenderList={getAllPromotions}
+        />
         </div>
     )
 }

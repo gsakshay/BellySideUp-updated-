@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
@@ -15,9 +15,16 @@ import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import {Badge} from "@material-ui/core"
 import { useHistory } from 'react-router-dom';
-import { axiosPost, axiosDelete } from '../config/axiosClient';
+import { axiosPost, axiosDelete, axiosGet } from '../config/axiosClient';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import {URL} from "../config/config"
+
+import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
+
+import EditDish from "../Dialogs/AddDish"
+
+import {Context} from "../Context/ContextProvier"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,9 +48,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRenderDishList}) =>{
+const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
+    
+    const [editDishDialog, setEditDishDialog] = useState(false)
 
     const history = useHistory()
 
@@ -51,12 +60,35 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
         setExpanded(!expanded);
     };
 
+    const context = useContext(Context);
+    const favorites = context.Favorites;
+    const {favoriteList} = favorites.state;
+    const [isFavourite, setIsFavorite] = useState(0);
+
+    const [favoriteChanged, setFavoriteChange] = useState(true)
+
+    const getAllFavorites = () =>{
+        axiosGet(`users/favorites/all`)
+        .then(res=>{
+            if(res.status === 200){
+                favorites.dispatch({
+                    type: "fav-list",
+                    value: res.data
+                })
+            }
+        })
+        .catch(err=>console.log(err, "there is an error"))
+    }
+
     
     const addFavorite = () =>{
         axiosPost(`users/favorites/${content.id}`, {})
             .then(res=>{
                 if(res.status === 200){
-                    alert("Dish added to favorites")
+                    alert("Dish added to favorites");
+                    getAllFavorites()
+                    setFavoriteChange(preVal=>!preVal)
+                    history.push("/favorites")
                 }
             })
             .catch(err=>alert(err))
@@ -67,7 +99,9 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
             .then(res=>{
                 if(res.status === 200){
                     alert("Dish Removed from favorites");
-                    reRenderFavoriteList()
+                    getAllFavorites();
+                    setFavoriteChange(preVal=>!preVal);
+                    setIsFavorite(false)
                 }
             })
             .catch(err=>alert(err))
@@ -83,6 +117,18 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
         })
         .catch(err=>alert(err))
     }
+
+    const decideFavorite = () =>{
+        const list = favoriteList.filter(fav=> fav.dishId === content.id);
+        setIsFavorite(list.length ? true : false)
+    }
+
+    useEffect(() => {
+        decideFavorite()
+    }, [])
+    useEffect(() => {
+        decideFavorite()
+    }, [favoriteChanged])
  
     return(
         <Card className={classes.root}>
@@ -96,14 +142,14 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
                     <Badge badgeContent={content.category} color="secondary"></Badge>
                 }
                 action={(admin && !favorite) &&
-                    <><IconButton><EditIcon color="primary"/></IconButton>
+                    <><IconButton onClick={()=>setEditDishDialog(true)}><EditIcon color="primary"/></IconButton>
                     <IconButton onClick={deleteDish}><DeleteIcon color="secondary"/></IconButton>
                     </>
                 }
             />
             <CardMedia
                 className={classes.media}
-                image={`http://localhost:3000//images//Screenshot%20(30).png`}
+                image={`${URL}/${content.image}`}
                 title="Paella dish"
             />
             <CardContent>
@@ -117,13 +163,10 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
             </CardContent>
             <CardActions disableSpacing>
                 {
-                    favorite ? <Button onClick={removeFavorite} variant="outlined" color="primary">
-                    Remove favorite
-                </Button> : <Button onClick={addFavorite} variant="outlined" color="secondary">
-                    Add favorite<FavoriteIcon />
-                </Button>
-                }
-                                
+                    favorite ? <Button variant="outlined" onClick={removeFavorite} className={classes.favButton} color="primary">
+                        Remove Favorite
+                    </Button> : `Read more in the description`
+                }                           
                 <IconButton
                 className={clsx(classes.expand, {
                     [classes.expandOpen]: expanded,
@@ -143,6 +186,13 @@ const CustomCard = ({content, single, favorite,reRenderFavoriteList, admin, reRe
                 </Typography>
                 </CardContent>
             </Collapse>
+            <EditDish 
+            open={editDishDialog}
+            setOpen={setEditDishDialog}
+            edit={true}
+            dish={content}
+            reRenderList={reRenderDishList}
+            />
         </Card>
     )
 }

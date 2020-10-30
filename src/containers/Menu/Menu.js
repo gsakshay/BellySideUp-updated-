@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Grid from '@material-ui/core/Grid';
-import {axiosGet} from "../../config/axiosClient"
+import {axiosDelete, axiosGet} from "../../config/axiosClient"
 import { makeStyles } from '@material-ui/core/styles';
 import Card from "../../components/Card";
 import Button from '@material-ui/core/Button';
+import AddDish from "../../Dialogs/AddDish"
 
 
 import {Context} from "../../Context/ContextProvier"
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#fcdada"
   },
   newDishButton:{
-      marginTop: "2rem"
+      margin: "2rem 2rem 0 0"
   }
   
 }));
@@ -31,6 +32,7 @@ const Menu = () => {
   const classes = useStyles();
   const [dishes, setDishes] = useState([]);
 
+    const [addDishDialog, setAddDishDialog] = useState(false);
 
     const context = useContext(Context);
     const user = context.Profile;
@@ -50,6 +52,17 @@ const Menu = () => {
         getAllDishes()
     }, [])
 
+    const deleteAllDishes = () =>{
+        axiosDelete(`dishes`, {})
+            .then(res=>{
+                if(res.status === 200){
+                    alert(`All dishes have been siccessfully deleted`);
+                    getAllDishes()
+                }
+            })
+            .catch(err=>console.log(err))
+    }
+
     return (
         <div>
         <div className="container">
@@ -60,15 +73,25 @@ const Menu = () => {
             </div>
         </div>
         {
-            admin && <Button className={classes.newDishButton} variant="outlined" color="secondary">
-            Add Dish
-        </Button>
+            admin && <>
+            <Button className={classes.newDishButton} onClick={()=>setAddDishDialog(true)} variant="outlined" color="primary">
+                Add Dish
+            </Button>
+            <Button className={classes.newDishButton} onClick={deleteAllDishes} variant="outlined" color="secondary">
+                Delete all dishes
+            </Button>
+            </>
         }
         <Grid container className={classes.promotions} spacing={3}>
             {
                 dishes?.map(dish => <Grid item xs={12} sm={6} md={4}><Card content={dish} admin={admin} reRenderDishList={getAllDishes}/></Grid>)
             }
         </Grid>
+        <AddDish 
+        open={addDishDialog}
+        setOpen={setAddDishDialog}
+        reRenderList={getAllDishes}
+        />
         </div>
     )
 }

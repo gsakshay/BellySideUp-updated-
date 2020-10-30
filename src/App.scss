@@ -1,34 +1,40 @@
+/** @format */
+
 $primary-color: #2d6187;
 $secondary-color: #1a1c20;
 
 .myApp {
-  margin-top: 4rem !important;
+	margin-top: 4rem !important;
 }
 
 a {
-  text-decoration: none;
-  color: #1a1c20;
+	text-decoration: none;
+	color: #1a1c20;
 }
 
 .main-nav-active {
-  .MuiListItemIcon-root {
-    color: $primary-color;
-  }
-  .MuiListItemText-root {
-    color: $primary-color;
-  }
+	.MuiListItemIcon-root {
+		color: $primary-color;
+	}
+	.MuiListItemText-root {
+		color: $primary-color;
+	}
 }
 
 .container {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 }
 
 .register-row {
-  margin-left: auto;
+	margin-left: auto;
 }
 
 .secondary-color {
-  color: $secondary-color;
+	color: $secondary-color;
+}
+
+.MuiPaper-root.MuiDialog-paper.MuiDialog-paperScrollPaper {
+	padding: 2rem !important;
 }

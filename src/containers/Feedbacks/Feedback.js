@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import FeedbackCard from "../../components/FeedbackCard"
 import { Typography } from '@material-ui/core';
 import { Email } from '@material-ui/icons';
+import {sortDates} from "../../config/dataModifiers"
 
 const useStyles = makeStyles((theme) => ({
   promotions:  {
@@ -32,7 +33,7 @@ const Feedback = () => {
         axiosGet(`feedback`)
         .then(res=>{
             if(res.status === 200){
-                setFeedbacks(res.data)
+                setFeedbacks(res.data?.sort(sortDates))
             }
         })
         .catch(err=>console.log(err, "there is an error"))

@@ -40,6 +40,7 @@ const Login = ({open, setOpen}) => {
       .then(res=>{
           if(res.status === 200){
               alert("login successfull")
+              window.location.reload()
               handleClose()
               user.dispatch({
                 type: "all",

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -10,6 +10,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import { axiosDelete } from '../config/axiosClient';
+import EditLeader from "../Dialogs/AddLeader"
+
+import {URL} from "../config/config"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,6 +34,8 @@ export default function MediaControlCard({leader, admin, reRenderList}) {
   const classes = useStyles();
   const theme = useTheme();
 
+  const [editLeaderDialog, setEditLeaderDialog] = useState(false);
+
   const deleteChef = () =>{
     axiosDelete(`leaders/${leader.id}`, {})
     .then(res=>{
@@ -46,13 +51,12 @@ export default function MediaControlCard({leader, admin, reRenderList}) {
     <Card className={classes.root}>
         <CardMedia
         className={classes.cover}
-        image="http://localhost:3000//images//alberto.png"
-        title="Live from space album cover"
+        image={`${URL}/${leader.image}`}
       />
       <div className={classes.details}>
         {
           admin && <CardHeader action={
-            <><IconButton><EditIcon color="primary"/></IconButton>
+            <><IconButton onClick={()=>setEditLeaderDialog(true)}><EditIcon color="primary"/></IconButton>
             <IconButton onClick={deleteChef}><DeleteIcon color="secondary"/></IconButton>
             </>
           } />
@@ -72,6 +76,13 @@ export default function MediaControlCard({leader, admin, reRenderList}) {
           </Typography>
         </CardContent>
       </div>
+      <EditLeader 
+      open={editLeaderDialog}
+      setOpen={setEditLeaderDialog}
+      edit={true}
+      leader={leader}
+      reRenderList={reRenderList}    
+      />
     </Card>
   );
 }

@@ -1,9 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import Grid from '@material-ui/core/Grid';
 import {axiosGet} from "../../config/axiosClient"
 import { makeStyles } from '@material-ui/core/styles';
 import Card from "../../components/Card";
 import { Typography } from '@material-ui/core';
+
+import {Context} from "../../Context/ContextProvier";
 
 const useStyles = makeStyles((theme) => ({
   promotions:  {
@@ -26,12 +28,19 @@ const useStyles = makeStyles((theme) => ({
 
 const Favorites = () => {
   const classes = useStyles();
-  const [favorites, setFavorites] = useState([]);
+
+  const context = useContext(Context);
+  const favorites = context.Favorites;
+  const {favoriteList} = favorites.state;
+
     const getAllFavorites = () =>{
         axiosGet(`users/favorites/all`)
         .then(res=>{
             if(res.status === 200){
-                setFavorites(res.data)
+                favorites.dispatch({
+                    type: "fav-list",
+                    value: res.data
+                })
             }
         })
         .catch(err=>console.log(err, "there is an error"))
@@ -53,12 +62,12 @@ const Favorites = () => {
         </div>
         <Typography className={classes.leaderHeading} color="primary" component="p" variant="p">
             {
-                favorites.length ? `You have ${favorites.length} favorites` : `Add some favorites`
+                favoriteList?.length ? `You have ${favoriteList?.length} favorites` : `Add some favorites`
             }
         </Typography>
         <Grid container className={classes.promotions} spacing={3}>
             {
-                favorites?.map(favorites => <Grid item xs={12} sm={6} md={4}><Card content={favorites.dish} reRenderFavoriteList={getAllFavorites} favorite={true}/></Grid>)
+                favoriteList?.map(favorites => <Grid item xs={12} sm={6} md={4}><Card content={favorites.dish} reRenderFavoriteList={getAllFavorites} favorite={true}/></Grid>)
             }
         </Grid>
         </div>
