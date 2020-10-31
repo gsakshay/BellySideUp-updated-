@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
@@ -13,45 +13,45 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
-import {Badge} from "@material-ui/core"
+import { Badge } from "@material-ui/core"
 import { useHistory } from 'react-router-dom';
 import { axiosPost, axiosDelete, axiosGet } from '../config/axiosClient';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import {URL} from "../config/config"
+import { URL } from "../config/config"
 
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
 
 import EditDish from "../Dialogs/AddDish"
 
-import {Context} from "../Context/ContextProvier"
+import { Context } from "../Context/ContextProvier"
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-  promotions: {
-    padding: "4rem"
-  },
+    root: {
+    },
+    media: {
+        height: 0,
+        paddingTop: '56.25%', // 16:9
+    },
+    expand: {
+        transform: 'rotate(0deg)',
+        marginLeft: 'auto',
+        transition: theme.transitions.create('transform', {
+            duration: theme.transitions.duration.shortest,
+        }),
+    },
+    expandOpen: {
+        transform: 'rotate(180deg)',
+    },
+    promotions: {
+        padding: "4rem"
+    },
 }));
 
-const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
+const CustomCard = ({ content, single, favorite, admin, reRenderDishList }) => {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
-    
+
     const [editDishDialog, setEditDishDialog] = useState(false)
 
     const history = useHistory()
@@ -62,64 +62,114 @@ const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
 
     const context = useContext(Context);
     const favorites = context.Favorites;
-    const {favoriteList} = favorites.state;
+    const { favoriteList } = favorites.state;
     const [isFavourite, setIsFavorite] = useState(0);
 
     const [favoriteChanged, setFavoriteChange] = useState(true)
 
-    const getAllFavorites = () =>{
+    const toast = context.Toast;
+
+    const getAllFavorites = () => {
         axiosGet(`users/favorites/all`)
-        .then(res=>{
-            if(res.status === 200){
-                favorites.dispatch({
-                    type: "fav-list",
-                    value: res.data
-                })
-            }
-        })
-        .catch(err=>console.log(err, "there is an error"))
+            .then(res => {
+                if (res.status === 200) {
+                    favorites.dispatch({
+                        type: "fav-list",
+                        value: res.data
+                    })
+                }
+            })
+            .catch(err => console.log(err, "there is an error"))
     }
 
-    
-    const addFavorite = () =>{
+
+    const addFavorite = () => {
         axiosPost(`users/favorites/${content.id}`, {})
-            .then(res=>{
-                if(res.status === 200){
-                    alert("Dish added to favorites");
+            .then(res => {
+                if (res.status === 200) {
+                    toast.dispatch({
+                        type: "new-toast",
+                        value: {
+                            open: true,
+                            severity: "success",
+                            message: "Dish added to favorites",
+                            seconds: 3000,
+                        }
+                    })
                     getAllFavorites()
-                    setFavoriteChange(preVal=>!preVal)
+                    setFavoriteChange(preVal => !preVal)
                     history.push("/favorites")
                 }
             })
-            .catch(err=>alert(err))
+            .catch(err => toast.dispatch({
+                type: "new-toast",
+                value: {
+                    open: true,
+                    severity: "error",
+                    message: err,
+                    seconds: 3000,
+                }
+            }))
     }
 
-    const removeFavorite = () =>{
+    const removeFavorite = () => {
         axiosDelete(`users/favorites/${content.id}`, {})
-            .then(res=>{
-                if(res.status === 200){
-                    alert("Dish Removed from favorites");
+            .then(res => {
+                if (res.status === 200) {
+                    toast.dispatch({
+                        type: "new-toast",
+                        value: {
+                            open: true,
+                            severity: "success",
+                            message: "Dish Removed from favorites",
+                            seconds: 3000,
+                        }
+                    })
                     getAllFavorites();
-                    setFavoriteChange(preVal=>!preVal);
+                    setFavoriteChange(preVal => !preVal);
                     setIsFavorite(false)
                 }
             })
-            .catch(err=>alert(err))
+            .catch(err => toast.dispatch({
+                type: "new-toast",
+                value: {
+                    open: true,
+                    severity: "error",
+                    message: err,
+                    seconds: 3000,
+                }
+            }))
     }
 
-    const deleteDish = () =>{
+    const deleteDish = () => {
         axiosDelete(`dishes/${content.id}`, {})
-        .then(res=>{
-            if(res.status === 200){
-                alert(`Dish is deleted`);
-                reRenderDishList()
-            }
-        })
-        .catch(err=>alert(err))
+            .then(res => {
+                if (res.status === 200) {
+                    toast.dispatch({
+                        type: "new-toast",
+                        value: {
+                            open: true,
+                            severity: "success",
+                            message: "Dish is deleted",
+                            seconds: 3000,
+                        }
+                    })
+                    reRenderDishList()
+                }
+            })
+            .catch(err => toast.dispatch({
+                type: "new-toast",
+                value: {
+                    open: true,
+                    severity: "error",
+                    message: err,
+                    seconds: 3000,
+                }
+            }))
     }
 
-    const decideFavorite = () =>{
-        const list = favoriteList.filter(fav=> fav.dishId === content.id);
+    const decideFavorite = () => {
+        const list = favoriteList.filter(fav => fav.dishId === content.id);
         setIsFavorite(list.length ? true : false)
     }
 
@@ -129,8 +179,8 @@ const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
     useEffect(() => {
         decideFavorite()
     }, [favoriteChanged])
- 
-    return(
+
+    return (
         <Card className={classes.root}>
             <CardHeader
                 title={
@@ -142,8 +192,8 @@ const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
                     <Badge badgeContent={content.category} color="secondary"></Badge>
                 }
                 action={(admin && !favorite) &&
-                    <><IconButton onClick={()=>setEditDishDialog(true)}><EditIcon color="primary"/></IconButton>
-                    <IconButton onClick={deleteDish}><DeleteIcon color="secondary"/></IconButton>
+                    <><IconButton onClick={() => setEditDishDialog(true)}><EditIcon color="primary" /></IconButton>
+                        <IconButton onClick={deleteDish}><DeleteIcon color="secondary" /></IconButton>
                     </>
                 }
             />
@@ -154,11 +204,11 @@ const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
             />
             <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                <Chip color="primary" label={`₹ ${content.price}`} variant="outlined" /> 
+                    <Chip color="primary" label={`₹ ${content.price}`} variant="outlined" />
                 </Typography>
                 <br></br>
                 {
-                    single ? null :<Button onClick={()=>history.push(`/menu/${content.id}`)} color="secondary">Check out</Button>
+                    single ? null : <Button onClick={() => history.push(`/menu/${content.id}`)} color="secondary">Check out</Button>
                 }
             </CardContent>
             <CardActions disableSpacing>
@@ -166,32 +216,32 @@ const CustomCard = ({content, single, favorite, admin, reRenderDishList}) =>{
                     favorite ? <Button variant="outlined" onClick={removeFavorite} className={classes.favButton} color="primary">
                         Remove Favorite
                     </Button> : `Read more in the description`
-                }                           
+                }
                 <IconButton
-                className={clsx(classes.expand, {
-                    [classes.expandOpen]: expanded,
-                })}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label="show more"
+                    className={clsx(classes.expand, {
+                        [classes.expandOpen]: expanded,
+                    })}
+                    onClick={handleExpandClick}
+                    aria-expanded={expanded}
+                    aria-label="show more"
                 >
-                <ExpandMoreIcon />
+                    <ExpandMoreIcon />
                 </IconButton>
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
-                <Typography paragraph>Desc:</Typography>
-                <Typography paragraph>
-                    {content.description}
-                </Typography>
+                    <Typography paragraph>Desc:</Typography>
+                    <Typography paragraph>
+                        {content.description}
+                    </Typography>
                 </CardContent>
             </Collapse>
-            <EditDish 
-            open={editDishDialog}
-            setOpen={setEditDishDialog}
-            edit={true}
-            dish={content}
-            reRenderList={reRenderDishList}
+            <EditDish
+                open={editDishDialog}
+                setOpen={setEditDishDialog}
+                edit={true}
+                dish={content}
+                reRenderList={reRenderDishList}
             />
         </Card>
     )
