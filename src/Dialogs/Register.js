@@ -94,7 +94,7 @@ const Register = ({ open, setOpen }) => {
           margin="dense"
           value={firstName}
           id="firstname"
-          label="Firstname"
+          label="First Name"
           onChange={(event) => setFirstname(event.target.value)}
           type="name"
           fullWidth
@@ -103,7 +103,7 @@ const Register = ({ open, setOpen }) => {
           margin="dense"
           value={lastName}
           id="lastname"
-          label="Lastname"
+          label="Last Name"
           onChange={(event) => setLastname(event.target.value)}
           type="name"
           fullWidth

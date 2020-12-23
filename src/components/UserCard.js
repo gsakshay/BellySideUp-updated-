@@ -25,7 +25,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function UserCard({user}) {
+export default function UserCard({ user }) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -33,26 +33,33 @@ export default function UserCard({user}) {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <CardHeader
-            action={
-                user.admin &&
+          action={
+            user.admin &&
             <Chip
-            label="Admin"
-            color="secondary"
-            variant="outlined"
+              label="Admin"
+              color="secondary"
+              variant="outlined"
             />
-            }
+          }
         />
-        <Typography color="primary" variant="h6" component="h4">
-          First Name:{`  ${user.firstName}`}
+        <h4 className="user-card-details">First Name:</h4>
+        <Typography className="user-card-details" color="primary" variant="h6" component="h4">
+          {`  ${user.firstName}`}
         </Typography>
-        <Typography color="primary" variant="h6" component="h4">
-          Last Name:{`  ${user.lastName}`}
+        <br></br>
+        <h4 className="user-card-details">Last Name:</h4>
+        <Typography className="user-card-details" color="primary" variant="h6" component="h4">
+          {`  ${user.lastName}`}
         </Typography>
-        <Typography color="primary" variant="body2" component="p">
-          Phone Number:{`  ${user.phno}`}
+        <br></br>
+        <h4 className="user-card-details">Phone Number:</h4>
+        <Typography className="user-card-details" color="primary" variant="body2" component="p">
+          {`  ${user.phno}`}
         </Typography>
-        <Typography color="primary" variant="body2" component="p">
-          Address:{`  ${user.address}`}
+        <br></br>
+        <h4 className="user-card-details">Address</h4>
+        <Typography color="primary" variant="body2" component="p" className="user-card-details">
+          {`  ${user.address}`}
         </Typography>
       </CardContent>
     </Card>

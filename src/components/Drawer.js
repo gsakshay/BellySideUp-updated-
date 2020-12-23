@@ -1,4 +1,4 @@
-import React, {useState ,useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -27,16 +27,16 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Avatar from '@material-ui/core/Avatar';
 import Logo from "../assets/images/logo.png";
-import {NavLink, useHistory} from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 
 import LoginDialog from "../Dialogs/Login"
 import RegisterDialog from "../Dialogs/Register"
 
-import {Context} from "../Context/ContextProvier"
+import { Context } from "../Context/ContextProvier"
 
-import {axiosGet} from "../config/axiosClient"
+import { axiosGet } from "../config/axiosClient"
 
 const drawerWidth = 240;
 
@@ -78,30 +78,30 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-  sideLogo:{
+  sideLogo: {
     width: "11rem",
     height: "3.5rem"
   },
-  loginButton:{
+  loginButton: {
     marginLeft: "auto",
     marginRight: "1rem"
   },
-  drawerLogo:{
+  drawerLogo: {
     fontWeight: "bold",
     fontSize: "1.35rem"
   },
-  logout:{
+  logout: {
     marginTop: "5rem"
   },
   drawerNavigations: {
     padding: "3rem 0 0 0"
   },
-  navs:{
+  navs: {
     paddingLeft: "2rem"
   }
 }));
 
-const refreshPage = () =>{
+const refreshPage = () => {
   window.location.reload();
 }
 
@@ -111,28 +111,28 @@ const ResponsiveDrawer = (props) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [openLoginDialog, setOpenLoginDialog] = useState(false);
   const [openRegisterDialog, setOpenRegisterDialog] = useState(false);
-  
+
   const history = useHistory()
 
   const context = useContext(Context);
   const user = context.Profile;
-  const {username, admin} = user.state;
+  const { username, admin } = user.state;
 
   const favorites = context.Favorites;
 
-  const {favoriteList} = favorites.state;
+  const { favoriteList } = favorites.state;
 
-  const getAllFavorites = () =>{
+  const getAllFavorites = () => {
     axiosGet(`users/favorites/all`)
-    .then(res=>{
-        if(res.status === 200){
-            favorites.dispatch({
-                type: "fav-list",
-                value: res.data
-            })
+      .then(res => {
+        if (res.status === 200) {
+          favorites.dispatch({
+            type: "fav-list",
+            value: res.data
+          })
         }
-    })
-    .catch(err=>console.log(err, "there is an error"))
+      })
+      .catch(err => console.log(err, "there is an error"))
   }
 
   const handleDrawerToggle = () => {
@@ -144,105 +144,107 @@ const ResponsiveDrawer = (props) => {
     getAllFavorites()
   }, [])
 
-  const getUserDetails = () =>{
-    if(localStorage.getItem("auth_token")){
+  const getUserDetails = () => {
+    if (localStorage.getItem("auth_token")) {
       axiosGet(`users/user/single`)
-      .then(res=>{
-        if(res.status === 200){
-          user.dispatch({
-            type: "all", value: res.data
-          })
-        }
-      })
+        .then(res => {
+          if (res.status === 200) {
+            user.dispatch({
+              type: "all", value: res.data
+            })
+          }
+        })
     }
   }
 
   const drawer = (
     <div>
       <div className={classes.myToolbar} >
-        <Typography className={classes.drawerLogo} color="secondary">Belly Side up <FastfoodIcon color="primary" /> </Typography> 
+        <Typography className={classes.drawerLogo} color="secondary">Belly Side up <FastfoodIcon color="primary" /> </Typography>
       </div>
-     <div className={classes.drawerNavigations}> 
-      <List>
-        <NavLink activeClassName="main-nav-active" to="/home">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="primary"><HomeIcon /></ListItemIcon>
-          <ListItemText color="secondary">Home</ListItemText>
-        </ListItem>
-        </NavLink>
-        <NavLink activeClassName="main-nav-active" to="/about">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="primary"><InfoIcon /></ListItemIcon>
-          <ListItemText color="secondary">About Us</ListItemText>
-        </ListItem>
-        </NavLink>
-        
-        <NavLink activeClassName="main-nav-active" to="/menu">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><RestaurantMenuIcon /></ListItemIcon>
-          <ListItemText color="secondary">Menu</ListItemText>
-        </ListItem>
-        </NavLink>
-        
-        <NavLink activeClassName="main-nav-active" to="/contact">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><ContactSupportIcon /></ListItemIcon>
-          <ListItemText color="secondary">Contact Us</ListItemText>
-        </ListItem>
-        </NavLink>
-        
-        {
-          username && <NavLink activeClassName="main-nav-active" to="/favorites">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><FavoriteIcon /></ListItemIcon>
-          <ListItemText color="secondary">Favorites</ListItemText>
-        </ListItem>
-        </NavLink>
-        }
-        
-        {
-          admin && <NavLink activeClassName="main-nav-active" to="/users">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><PeopleIcon /></ListItemIcon>
-          <ListItemText color="secondary">Users</ListItemText>
-        </ListItem>
-        </NavLink>
-        }
+      <div className={classes.drawerNavigations}>
+        <List>
+          <NavLink activeClassName="main-nav-active" to="/home">
+            <ListItem className={classes.navs} button>
+              <ListItemIcon color="primary"><HomeIcon /></ListItemIcon>
+              <ListItemText color="secondary">Home</ListItemText>
+            </ListItem>
+          </NavLink>
+          <NavLink activeClassName="main-nav-active" to="/about">
+            <ListItem className={classes.navs} button>
+              <ListItemIcon color="primary"><InfoIcon /></ListItemIcon>
+              <ListItemText color="secondary">About Us</ListItemText>
+            </ListItem>
+          </NavLink>
 
-        {
-          username && <NavLink activeClassName="main-nav-active" to="/orders">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><LocalMallIcon /></ListItemIcon>
-          <ListItemText color="secondary">Orders</ListItemText>
-        </ListItem>
-        </NavLink>
-        }
-        
-        {
-          admin && <NavLink activeClassName="main-nav-active" to="/feedback">
-          <ListItem className={classes.navs} button>
-          <ListItemIcon color="secondary"><FeedbackIcon /></ListItemIcon>
-          <ListItemText color="secondary">Feedbacks</ListItemText>
-        </ListItem>  
-        </NavLink>
-        }
-              
-      </List>
+          <NavLink activeClassName="main-nav-active" to="/menu">
+            <ListItem className={classes.navs} button>
+              <ListItemIcon color="secondary"><RestaurantMenuIcon /></ListItemIcon>
+              <ListItemText color="secondary">Menu</ListItemText>
+            </ListItem>
+          </NavLink>
+
+          {
+            (username && !admin) && <NavLink activeClassName="main-nav-active" to="/contact">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><ContactSupportIcon /></ListItemIcon>
+                <ListItemText color="secondary">Contact Us</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
+          {
+            username && <NavLink activeClassName="main-nav-active" to="/favorites">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><FavoriteIcon /></ListItemIcon>
+                <ListItemText color="secondary">Favorites</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
+          {
+            admin && <NavLink activeClassName="main-nav-active" to="/users">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><PeopleIcon /></ListItemIcon>
+                <ListItemText color="secondary">Users</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
+          {
+            username && <NavLink activeClassName="main-nav-active" to="/orders">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><LocalMallIcon /></ListItemIcon>
+                <ListItemText color="secondary">Orders</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
+          {
+            admin && <NavLink activeClassName="main-nav-active" to="/feedback">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><FeedbackIcon /></ListItemIcon>
+                <ListItemText color="secondary">Feedbacks</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
+        </List>
       </div>
       {
         username && <div className={classes.logout}>
-        <Typography>
-          Log out 
+          <Typography>
+            Log out
         </Typography>
-        <IconButton>
-        <ExitToAppIcon color="secondary" onClick={()=>{
-          history.push("/home")
-          localStorage.clear();
-          refreshPage();
-          user.dispatch({type: "reset", value:{}})
-        }}/>
-        </IconButton>
-      </div> 
+          <IconButton>
+            <ExitToAppIcon color="secondary" onClick={() => {
+              history.push("/home")
+              localStorage.clear();
+              refreshPage();
+              user.dispatch({ type: "reset", value: {} })
+            }} />
+          </IconButton>
+        </div>
       }
     </div>
   );
@@ -267,15 +269,15 @@ const ResponsiveDrawer = (props) => {
             Belly Side Up
           </Typography>
           {
-            username ? <Chip className={classes.loginButton} color="secondary" avatar={<Avatar alt={username}/>} label={username} /> :
-             <><Button className={classes.loginButton} variant="outlined" color="secondary" onClick={()=>setOpenLoginDialog(true)}>
-            Log In
+            username ? <Chip className={classes.loginButton} color="secondary" avatar={<Avatar alt={username} />} label={username} /> :
+              <><Button className={classes.loginButton} variant="outlined" color="secondary" onClick={() => setOpenLoginDialog(true)}>
+                Log In
           </Button>
-            <Button className={classes.register} variant="contained" color="secondary" onClick={()=>setOpenRegisterDialog(true)}>
-                Register
+                <Button className={classes.register} variant="contained" color="secondary" onClick={() => history.push('/register')}>
+                  Register
             </Button></>
           }
-          
+
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
@@ -311,13 +313,13 @@ const ResponsiveDrawer = (props) => {
       </nav>
       <main className={classes.content}>
       </main>
-      <LoginDialog 
-      open={openLoginDialog}
-      setOpen={setOpenLoginDialog}
+      <LoginDialog
+        open={openLoginDialog}
+        setOpen={setOpenLoginDialog}
       />
-      <RegisterDialog 
-      open={openRegisterDialog}
-      setOpen={setOpenRegisterDialog}
+      <RegisterDialog
+        open={openRegisterDialog}
+        setOpen={setOpenRegisterDialog}
       />
     </div>
   );

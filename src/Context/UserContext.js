@@ -1,4 +1,5 @@
 export const initialState = {
+  id: "",
   firstName: "",
   lastName: "",
   username: "",
@@ -13,6 +14,8 @@ export const reducer = (state, action) => {
       return { ...state, firstName: action.value };
     case "last_name":
       return { ...state, lastName: action.value };
+    case "id":
+      return { ...state, id: action.value };
     case "phno":
       return { ...state, phNo: action.value };
     case "username":
@@ -20,7 +23,7 @@ export const reducer = (state, action) => {
     case "address":
       return { ...state, address: action.value };
     case "admin":
-      return { ...state, admin: action.value };  
+      return { ...state, admin: action.value };
     case "reset":
       return initialState;
     case "all":
@@ -28,6 +31,7 @@ export const reducer = (state, action) => {
         ...state,
         firstName: action.value.firstName,
         lastName: action.value.lastName,
+        id: action.value.id,
         username: action.value.username,
         phNo: action.value.phno,
         address: action.value.address,

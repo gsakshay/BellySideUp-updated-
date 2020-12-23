@@ -22,14 +22,15 @@ const useStyles = makeStyles((theme) => ({
     },
     feedback: {
         [theme.breakpoints.up('md')]: {
-            width: "160%"
+            width: "100%"
         },
-        padding: "2rem",
     },
     actionButtons: {
         margin: "2rem"
-    }
-
+    },
+    feedbackContnet: {
+        padding: "2rem"
+    },
 }));
 
 const Contact = () => {
@@ -92,15 +93,18 @@ const Contact = () => {
                 <p className="secondary-color">Please make sure that you have logged in to submit a feedback</p>
             </div>
             <br></br>
-            <TextField
-                id="filled-multiline-static"
-                label="Your feedback"
-                multiline
-                rows={10}
-                value={userFeedback}
-                onChange={(event) => setUseerFeedback(event.target.value)}
-                fullWidth
-            />
+            <div className={classes.feedbackContnet}>
+                <TextField
+                    id="filled-multiline-static"
+                    label="Your feedback"
+                    multiline
+                    rows={10}
+                    value={userFeedback}
+                    onChange={(event) => setUseerFeedback(event.target.value)}
+                    fullWidth
+                />
+            </div>
+
             <div>
                 <Button className={classes.actionButtons} variant="outlined" onClick={submitFeedback} color="primary">
                     Submit

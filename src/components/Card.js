@@ -208,7 +208,7 @@ const CustomCard = ({ content, single, favorite, admin, reRenderDishList }) => {
                 </Typography>
                 <br></br>
                 {
-                    single ? null : <Button onClick={() => history.push(`/menu/${content.id}`)} color="secondary">Check out</Button>
+                    single ? null : <Button onClick={() => history.push(`/menu/${content.id}`)} color="secondary">Know more</Button>
                 }
             </CardContent>
             <CardActions disableSpacing>
@@ -234,6 +234,9 @@ const CustomCard = ({ content, single, favorite, admin, reRenderDishList }) => {
                     <Typography paragraph>
                         {content.description}
                     </Typography>
+                    {/* <Typography color='secondary'>
+                        Prepared by: {content?.preparedby}
+                    </Typography> */}
                 </CardContent>
             </Collapse>
             <EditDish

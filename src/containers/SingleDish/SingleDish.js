@@ -38,6 +38,8 @@ const SingleDish = () => {
 
     const context = useContext(Context);
     const toast = context.Toast;
+    const user = context.Profile;
+    const { username, admin } = user.state;
     /* const favorites = context.Favorites;
     const [isFavorite, setIsFavorite] = useState(false); */
 
@@ -149,12 +151,18 @@ const SingleDish = () => {
                 <Grid item xs={12} sm={5} ><Card content={dishDetails} single={true} /></Grid>
                 <Grid item xs={10} sm={4} ><CommentsCard comments={comments} dishId={dishId} reRenderList={getAllComments} /></Grid>
                 <Grid item xs={3} >
-                    <Button variant="contained" onClick={orderDish} size="large" color="primary">
-                        Order Now
-                </Button>
-                    <Button variant="outlined" onClick={addFavorite} className={classes.favButton} color="secondary">
-                        Add Favorite
-                </Button>
+                    {
+                        username &&
+                        <>
+                            <Button variant="contained" onClick={orderDish} size="large" color="primary">
+                                Order Now
+                        </Button>
+                            <Button variant="outlined" onClick={addFavorite} className={classes.favButton} color="secondary">
+                                Add Favorite
+                        </Button>
+                        </>
+                    }
+
                 </Grid>
             </Grid>
         </div>

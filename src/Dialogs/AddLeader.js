@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect, useContext } from 'react';
+import React, { useReducer, useCallback, useState, useEffect, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { axiosPost, axiosPut } from '../config/axiosClient';
 import { Context } from '../Context/ContextProvier';
+import { useDropzone } from 'react-dropzone'
 
 const useStyles = makeStyles({
   dialog: {
@@ -83,6 +84,11 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
       dispatch({ type: "reset", value: "" })
     }
   };
+
+  const onDrop = useCallback(file => {
+    setImage(file?.[0])
+  }, [])
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   const addleader = () => {
     if (edit) {
@@ -194,12 +200,7 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
             control={<Checkbox checked={leaderData.featured} onChange={() => dispatch({ type: "featured", })} name="featured" />}
             label="Featured"
           />
-          {
-            edit ? null : <div>
-              <label>Upload an image for the leader: </label>
-              <input type="file" onChange={(event) => setImage(event.target.files?.[0])} />
-            </div>
-          }
+
           <TextField
             margin="dense"
             value={leaderData.designation}
@@ -220,6 +221,17 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
             type="text"
             fullWidth
           />
+
+          {
+            edit ? null : <div className="upload" {...getRootProps()}>
+              <input {...getInputProps()} />
+              {
+                isDragActive ? <p className="prim">Upload an image for the dish</p>
+                  : <div><p className="prim">Upload an image for the dish!!</p>
+                    <p>Drag and drop or click to upload</p></div>
+              }
+            </div>
+          }
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button onClick={handleClose} color="primary">

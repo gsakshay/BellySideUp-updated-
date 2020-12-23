@@ -18,6 +18,9 @@ import CreateIcon from '@material-ui/icons/Create';
 import TextField from '@material-ui/core/TextField';
 import { axiosPost } from "../config/axiosClient";
 import { Context } from "../Context/ContextProvier";
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,12 +54,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CommentsCard({ comments, dishId, reRenderList }) {
+
   const classes = useStyles();
 
   const [openEditor, setOpenEditor] = useState(false);
   const [newcomment, setNewcomment] = useState("")
 
   const context = useContext(Context)
+  const user = context.Profile;
+  const { username, admin, id } = user.state;
   const toast = context.Toast
 
   const postComment = () => {
@@ -103,6 +109,12 @@ export default function CommentsCard({ comments, dishId, reRenderList }) {
                       <SendIcon color="primary" />
                     </ListItemIcon>
                     <ListItemText primary={`${comment?.comment}`} />
+                    {
+                      (comment.userId === id) ? <>
+                        <IconButton><EditIcon color="primary" /></IconButton>
+                        <IconButton><DeleteIcon color="secondary" /></IconButton>
+                      </> : null
+                    }
                   </ListItem>
                   <Collapse in={true} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
@@ -134,13 +146,12 @@ export default function CommentsCard({ comments, dishId, reRenderList }) {
             <Button onClick={postComment} variant="contained" color="primary">
               Post
         </Button>
-          </> : <Button onClick={() => setOpenEditor(true)} variant="outlined" color="secondary">
-              <CreateIcon color="primary" />Add a comment
+          </> : username && <Button Button onClick={() => setOpenEditor(true)} variant="outlined" color="secondary">
+            <CreateIcon color="primary" />Add a comment
         </Button>
         }
 
       </CardContent>
     </Card>
-
   );
 }

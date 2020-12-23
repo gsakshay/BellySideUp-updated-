@@ -3,8 +3,10 @@
 $primary-color: #2d6187;
 $secondary-color: #1a1c20;
 
+
 .myApp {
 	margin-top: 4rem !important;
+	width: 100%;
 }
 
 a {
@@ -37,4 +39,32 @@ a {
 
 .MuiPaper-root.MuiDialog-paper.MuiDialog-paperScrollPaper {
 	padding: 2rem !important;
+}
+
+.register-page{
+	text-align: center !important;
+	padding: 2rem;
+}
+
+.padding-2{
+	padding: 2rem;
+}
+
+.user-card-details{
+	display: inline
+}
+
+
+.upload{
+	min-height: 10rem;
+	width: 100%;
+	padding: 1rem;
+	text-align: center;
+	border: none;
+	cursor: pointer;
+	background-color: #fcdada;
+}
+
+.prim{
+	color: $primary-color;
 }

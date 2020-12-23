@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect, useContext } from 'react';
+import React, { useReducer, useState, useCallback, useEffect, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { axiosPost, axiosPut } from '../config/axiosClient';
 import { Context } from '../Context/ContextProvier';
+import { useDropzone } from 'react-dropzone'
 
 const useStyles = makeStyles({
   dialog: {
@@ -86,6 +87,11 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
       dispatch({ type: "reset", value: "" })
     }
   };
+
+  const onDrop = useCallback(file => {
+    setImage(file?.[0])
+  }, [])
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
   const adddish = () => {
     if (edit) {
@@ -185,15 +191,6 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
             type="name"
             fullWidth
           />
-          {/*           <TextField
-            margin="dense"
-            value={dishData.label}
-            id="label"
-            onChange={(event)=>dispatch({type:"label", value:event.target.value})}
-            label="Label"
-            type="label"
-            fullWidth
-          /> */}
           <TextField
             margin="dense"
             value={dishData.category}
@@ -208,12 +205,7 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
             control={<Checkbox checked={dishData.featured} onChange={() => dispatch({ type: "featured", })} name="featured" />}
             label="Featured"
           />
-          {
-            edit ? null : <div>
-              <label>Upload an image for the dish: </label>
-              <input type="file" onChange={(event) => setImage(event.target.files?.[0])} />
-            </div>
-          }
+
           <TextField
             margin="dense"
             value={dishData.amount}
@@ -234,6 +226,18 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
             type="text"
             fullWidth
           />
+
+          {
+            edit ? null :
+              <div className="upload" {...getRootProps()}>
+                <input {...getInputProps()} />
+                {
+                  isDragActive ? <p className="prim">Upload an image for the dish</p>
+                    : <div><p className="prim">Upload an image for the dish!!</p>
+                      <p>Drag and drop or click to upload</p></div>
+                }
+              </div>
+          }
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button onClick={handleClose} color="primary">
