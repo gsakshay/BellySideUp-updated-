@@ -87,6 +87,8 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
       dispatch({ type: "all", value: dish })
     } else {
       dispatch({ type: "reset", value: "" })
+      setImage({})
+      setUploaded(false)
     }
   };
 

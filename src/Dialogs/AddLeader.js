@@ -11,6 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { axiosPost, axiosPut } from '../config/axiosClient';
 import { Context } from '../Context/ContextProvier';
+import Chip from '@material-ui/core/Chip';
 import { useDropzone } from 'react-dropzone'
 
 const useStyles = makeStyles({
@@ -71,6 +72,7 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
   const [leaderData, dispatch] = useReducer(reducer, initialState);
 
   const [image, setImage] = useState({});
+  const [uploaded, setUploaded] = useState(false);
 
 
   const context = useContext(Context)
@@ -82,11 +84,14 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
       dispatch({ type: "all", value: leader })
     } else {
       dispatch({ type: "reset", value: "" })
+      setImage({})
+      setUploaded(false)
     }
   };
 
   const onDrop = useCallback(file => {
     setImage(file?.[0])
+    setUploaded(true);
   }, [])
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
@@ -223,15 +228,29 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, leader }
           />
 
           {
-            edit ? null : <div className="upload" {...getRootProps()}>
-              <input {...getInputProps()} />
-              {
-                isDragActive ? <p className="prim">Upload an image for the dish</p>
-                  : <div><p className="prim">Upload an image for the dish!!</p>
-                    <p>Drag and drop or click to upload</p></div>
-              }
-            </div>
+            edit ? null : (
+              <div className="upload" {...getRootProps()}>
+                {uploaded ? <Chip
+                  label={image?.name}
+                  onDelete={() => {
+                    setImage({})
+                    setUploaded(false)
+                  }}
+                  color="secondary"
+                /> : <><input {...getInputProps()} />
+                    {
+                      isDragActive ? <p className="prim">Upload an image for the dish</p>
+                        : <div><p className="prim">Upload an image for the dish!!</p>
+                          <p>Drag and drop or click to upload</p></div>
+                    }
+                  </>
+                }
+
+              </div>
+            )
+
           }
+
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button onClick={handleClose} color="primary">
