@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import { getDateInRequiredFormat } from "../config/dataModifiers";
 import CreateIcon from '@material-ui/icons/Create';
 import TextField from '@material-ui/core/TextField';
-import { axiosPost } from "../config/axiosClient";
+import { axiosPost, axiosDelete } from "../config/axiosClient";
 import { Context } from "../Context/ContextProvier";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -67,7 +67,6 @@ export default function CommentsCard({ comments, dishId, reRenderList }) {
 
   const postComment = () => {
     axiosPost(`comments/${dishId}`, {
-      rating: 5,
       comment: newcomment
     }).then(res => {
       if (res.status === 200) {
@@ -85,6 +84,34 @@ export default function CommentsCard({ comments, dishId, reRenderList }) {
         setNewcomment("")
       }
     })
+  }
+
+  const deleteComment = (commentId) => {
+    axiosDelete(`comments/delete/${commentId}`)
+      .then(res => {
+        if (res.status === 200) {
+          toast.dispatch({
+            type: "new-toast",
+            value: {
+              open: true,
+              severity: "success",
+              message: "Your comment has been deleted",
+              seconds: 3000,
+            }
+          })
+          reRenderList()
+        } else {
+          toast.dispatch({
+            type: "new-toast",
+            value: {
+              open: true,
+              severity: "alert",
+              message: "Please try again",
+              seconds: 3000,
+            }
+          })
+        }
+      })
   }
 
   return (
@@ -111,8 +138,8 @@ export default function CommentsCard({ comments, dishId, reRenderList }) {
                     <ListItemText primary={`${comment?.comment}`} />
                     {
                       (comment.userId === id) ? <>
-                        <IconButton><EditIcon color="primary" /></IconButton>
-                        <IconButton><DeleteIcon color="secondary" /></IconButton>
+                        {/* <IconButton><EditIcon color="primary" /></IconButton> */}
+                        <IconButton onClick={() => deleteComment(comment.id)}><DeleteIcon color="secondary" /></IconButton>
                       </> : null
                     }
                   </ListItem>

@@ -27,7 +27,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Avatar from '@material-ui/core/Avatar';
 import Logo from "../assets/images/logo.png";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink, useHistory, Link } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 
@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
   myToolbar: {
     display: "grid",
     placeItems: "center",
+    cursor: "pointer",
     height: "4rem"
   },
   drawerPaper: {
@@ -160,7 +161,9 @@ const ResponsiveDrawer = (props) => {
   const drawer = (
     <div>
       <div className={classes.myToolbar} >
-        <Typography className={classes.drawerLogo} color="secondary">Belly Side up <FastfoodIcon color="primary" /> </Typography>
+        <Link to="/">
+          <Typography className={classes.drawerLogo} color="secondary">Belly Side up <FastfoodIcon color="primary" /> </Typography>
+        </Link>
       </div>
       <div className={classes.drawerNavigations}>
         <List>

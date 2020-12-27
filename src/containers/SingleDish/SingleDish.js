@@ -36,6 +36,8 @@ const SingleDish = () => {
     const slug = useParams();
     const dishId = slug.dishId;
 
+    const history = useHistory()
+
     const context = useContext(Context);
     const toast = context.Toast;
     const user = context.Profile;
@@ -99,6 +101,7 @@ const SingleDish = () => {
                             seconds: 3000,
                         }
                     })
+                    history.push("/favorites")
                 }
             })
             .catch(err => toast.dispatch({
@@ -125,6 +128,7 @@ const SingleDish = () => {
                             seconds: 3000,
                         }
                     })
+                    history.push("/orders")
                 }
             })
             .catch(err => toast.dispatch({
