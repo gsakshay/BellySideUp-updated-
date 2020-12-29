@@ -162,7 +162,7 @@ export default function FormDialog({ open, setOpen, reRenderList, edit, dish }) 
           value: {
             open: true,
             severity: "error",
-            message: err,
+            message: 'Dish could not be added, pease try again',
             seconds: 3000,
           }
         }))

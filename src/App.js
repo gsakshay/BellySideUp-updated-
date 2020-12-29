@@ -7,6 +7,7 @@ import Menu from "./containers/Menu/Menu";
 import Contact from "./containers/Contact/Contact";
 import Feedback from "./containers/Feedbacks/Feedback";
 import Favorites from "./containers/Favorite/Favorite";
+import Logs from "./containers/Logs/logs"
 import Users from "./containers/Users/Users"
 import { BrowserRouter, Route, Redirect, Switch, useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -45,6 +46,7 @@ const App = () => {
               <Route exact path="/favorites" render={props => <Favorites {...props} />} />
               <Route exact path="/users" render={props => <Users {...props} />} />
               <Route exact path="/orders" render={props => <Orders {...props} />} />
+              <Route exact path="/logs" render={props => <Logs {...props} />} />
               <Route exact path="/feedback" render={props => <Feedback {...props} />} />
               <Redirect to="/home" />
             </Switch>

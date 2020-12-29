@@ -23,6 +23,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import FastfoodIcon from '@material-ui/icons/Fastfood';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
+import BookIcon from '@material-ui/icons/Book';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -231,6 +232,16 @@ const ResponsiveDrawer = (props) => {
               </ListItem>
             </NavLink>
           }
+
+          {
+            admin && <NavLink activeClassName="main-nav-active" to="/logs">
+              <ListItem className={classes.navs} button>
+                <ListItemIcon color="secondary"><BookIcon /></ListItemIcon>
+                <ListItemText color="secondary">Logs</ListItemText>
+              </ListItem>
+            </NavLink>
+          }
+
 
         </List>
       </div>
